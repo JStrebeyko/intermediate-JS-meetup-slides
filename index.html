@@ -28,50 +28,1404 @@
       <div class="talk-card">
           <img class="logo" src="vendors/shower-warsawjs/images/logo.svg" alt="">
           <div class="details">
-              <img class="speaker-avatar" src="images/avatars/speaker-avatar.jpg" alt="">
-              <h2 class="speaker-name">Speaker Name</h2>
-              <h1 class="talk-title">Talk Title</h1>
-              <p class="talk-perform">2020-??-??</p>
+              <!-- <img class="speaker-avatar" src="images/avatars/speaker-avatar.jpg" alt=""> -->
+              <h2 class="speaker-name">Jakub Strebeyko</h2>
+              <h1 class="talk-title">JavaScript dla średnio-zaawansowanych</h1>
+              <p class="talk-perform">2020-04-19</p>
               <p class="speaker-contact">
-                  <a href="https://www.linkedin.com/in/speaker">linkedin.com/in/speaker</a>
+                  <a href="https://www.linkedin.com/in/strebeyko">linkedin.com/in/strebeyko</a>
               </p>
           </div>
       </div>
     </section>
 
+
     <section class="slide compact">
-        <h2>List Navigation</h2>
+        <h2>Plan</h2>
         <ol>
-            <li>Ennui keffiyeh thundercats</li>
-            <li class="next">Jean shorts biodiesel</li>
-            <li class="next">Terry richardson, swag blog</li>
-            <li class="next">Locavore umami vegan helvetica</li>
-            <li class="next">Fingerstache kale chips</li>
+            <li><code>10:00</code> Część I: Od silnika do modułu
+                <!-- <ul>
+                    <li>Czy JavaScript aby na pewno nie jest językiem kompilowanym?</li> 
+                    <li>Gdzie silnik szuka zmiennych?</li> 
+                    <li>Jak i po co stworzać "zakres"?</li>
+                    <li>Czym jest moduł?</li>
+                </ul> -->
+            </li>
+            <li class="next"><code>11:00</code> Część II: <code>this</code> & model dziedziczenia w JS
+                <!-- <ul>
+                    <li>Na co wskazuje słynne <code>this</code>? </li>
+                    <li>Po co dziedziczenie?</li>
+                    <li>Czym jest łańcuch prorotypów?</li>
+                    <li>O co naprawdę chodzi z klasami w JS?</li>
+                </ul> -->
+            </li>
+            <li class="next"><code>12:00</code> Część III: Asynchroniczność</li>
+                <!-- <ul>
+                    <li>Na co wskazuje słynne <code>this</code>? </li>
+                    <li>Po co dziedziczenie?</li>
+                    <li>Czym jest łańcuch prorotypów?</li>
+                    <li>O co naprawdę chodzi z klasami w JS?</li>
+                </ul> -->
+            </li>
         </ol>
-        <p class="next">Before they sold out master</p>
+    </section>
+
+    <!-- CZĘŚĆ PIERWSZA: SCOPE -->
+
+    <section class="slide compact">
+        <h2>Od Silnika do Modułu</h2>
+        <ul>
+           <li>Jaka jest rola <mark>silnika</mark> ECMAScript?</li>
+           <li>Jak powstają <mark>zmienne</mark>?</li>
+           <li>Od czego zależy ich <mark>dostępność</mark> w różnych miejscach kodu?</li>
+           <li>Czym jest <mark>domknięcie</mark> i dlaczego jest "leksykalne"?</li>
+           <li>Co to jest <mark>moduł</mark> i jak go zaimplementować?</li>
+        </ul>
     </section>
 
     <section class="slide compact">
+        <h2>Co to jest silnik ECMAScript?</h2>
+        <img class="cover" src="images/img/engines.jpg" width="480" height="360" alt="">
+
+    </section>
+
+    <section class="slide compact">
+        <h2>Silniki ECMAScript są...</h2>
+        <ol>
+            <li>odpowiedzialne za implementację standardu ECMAScript</li>
+            <li class="next"><mark>wszędzie</mark>
+                <ul>
+                    <li>Przeglądarka, Node, IoT...</li>
+                </ul>
+            </li>
+            <li class="next"><mark>różne</mark>
+                <ul>
+                    <li>SpiderMonkey (<em>Firefox</em>)</li>
+                    <li>JavaScriptCore / Nitro (<em>Safari</em>)</li>
+                    <li>V8 (<em>Chrome / Node</em>)...</li>
+                </ul>
+            </li>
+            <li class="next"><mark>coraz szybsze</mark>
+                <ul>
+                    <li>Od interpretatorów do kompilacji w locie</li>
+                </ul>
+            </li>
+        </ol>
+    </section>
+
+    <section class="slide">
+        <img class="cover" src="images/img/v8.png" width="480" height="360" alt="">
+    </section>
+
+    <section class="slide compact">
+        <h2>JS to język interpretowany...</h2>
+        <div class="next">
+            <img src="images/img/panda.gif" width="480" height="360" alt="">
+            <h2>który się kompiluje</h2>
+        </div>
+    </section>
+    
+    <section class="slide compact">
+        <h2>Rola Silnika:</h2>
+        <ol class="next">
+            <li>Kompilacja (lex-time)
+                <ul>
+                    <li><mark>Lexing</mark> 🔪
+                        <span class="next" style="color: gray">var a = "bonito"   =>   "var", "a", "=", "'bonito'"</span></li>
+                    <li><mark>Parsing</mark> 🌲 <span class="next" style="color: gray">tablica => Abstract Syntax Tree</span></li>
+                    <li><mark>Code generation</mark> ⚗️ <span class="next" style="color: gray">*magia*</span></li>
+                </ul>
+            </li>
+            <li class="next">Wykonanie (runtime)
+            </li>
+        </ol>
+        <p class="next">just-in-time: <a href="https://hacks.mozilla.org/2017/02/a-crash-course-in-just-in-time-jit-compilers/">JIT</a></p>
+    </section>
+
+
+    <section class="slide prism">
+        <h2>Prosta deklaracja</h2>
+        <pre style="font-size: 140px; margin-top: 150px" class="language-javascript">
+            <code>
+                var a = 4;
+            </code>
+        </pre>
+    </section>
+
+    <section class="slide prism">
+        <h2>Deklaracja i przypisanie</h2>
+        <pre style="font-size: 80px;" class="language-javascript">
+            <code>
+                var a;
+
+                a = 4;
+            </code>
+        </pre>
+    </section>
+
+    <section class="slide prism">
+        <h2>Różne etapy działania silnika</h2>
+        <pre style="font-size: 80px;" class="language-javascript">
+            <code>
+                // kompilacja
+
+                var a;
+
+                // runtime
+
+                a = 4;
+            </code>
+        </pre>
+    </section>
+    
+    <section class="slide compact">
+        <h2>Scope</h2>
+        <em>czyli tzw. Zakres Zmiennych</em>
+        <figure class="next" style="margin-top: 30px">
+            <blockquote>
+                <p>[Scope] jest zbiorem dokładnie określonych zasad przechowywania zmiannych dla danego miejsca w kodzie i późniejszego do nich dostępu</p>
+            </blockquote>
+            <figcaption>@getify</figcaption>
+        </figure>
+        <ul class="next">
+            <li>Współpracuje z Silnikiem</li>
+            <li class="next">Kolekcjonuje deklaracje zmiennych</li>
+            <li class="next">Określa zasady dostępu do nich</li>
+        </ul>
+        <img class="cover" style="transform: none;" src="images/img/spy.png" width="480" height="360" alt="">
+    </section>
+
+    <section class="slide prism">
+        <h2>Kompilacja</h2>
+        <em>deklaracje zmiennych</em>
+        <pre style="font-size: 20px;" class="language-javascript">
+            <code>
+                var a;
+                function b() {...}
+            </code>
+        </pre>
+            <p>Kompilator: <em>"Hej Scope, czy ten identyfikator istnieje dla tego miejsca w kodzie?"</em></p>
+            <p class="next"><span style="color: green">TAK</span>: "A, to spoko" idzimy dalej</p>
+            <p class="next"><span style="color: red;">NIE</span>: "Przypisz go proszę do bieżącego Zakresu"</p>
+            <em class="next">Zdublowane deklaracje zmiennych są ignorowane, funkcji są nadpisywane;</em>
+    </section>
+
+    <section class="slide">
+        <h3 class="shout">⏳ milisekundy później ⌛</h3>
+    </section>
+
+    <section class="slide prism">
+        <h2>Egzekucja programu</h2>
+        <em>przypisania i cała reszta operacji w naszym programie</em>
+        <pre style="font-size: 50px;" class="language-javascript">
+            <code>
+                a = 4
+                b = function bar() {...}
+                c = a + b()
+            </code>
+        </pre>
+        <ul style="margin-top: 30px">
+            <li class="next">Silnik wykonuje kod maszynowy</li>
+            <li class="next"><em>"Hej, Mr. Scope - szukam takiej zmiennej - słyszałeś o niej może?"</em> tzw. "lookup"
+            </li>
+        </ul>
+    </section>
+
+    <!-- <section class="slide">
+        <h2>jestem fronendem i co to jest?</h2>
+        <img class="cover" src="images/img/shrug.png" width="480" height="360" alt="">
+    </section> -->
+
+    <section class="slide prism">
+        <h2>Implikacje dla dostępności zmiennych</h2>
+        <pre style="font-size: 50px;" class="language-javascript">
+            <code>
+                console.log(a)
+                var a = 'Chichi Mango'
+            </code>
+        </pre>
+        <ul class="next" style="margin-top: 30px">
+            <li style="color: red">ReferenceError: a is not defined</li>
+            <li style="color: grey">undefined</li>
+            <li style="color: green">Chichi Mango</li>
+        </ul>
+    </section>
+
+    <section class="slide prism">
+        <h2>Hoisting</h2>
+        <span class="next">NIE ISTNIEJE!</span>
+        <p class="next">Po kompilacji silnik "widzi" kod jako:</p>
+        <pre style="font-size: 20px;" class="language-javascript">
+            <code class="next">
+                var a; // lex-time: zadeklarowana zmienna - dostępna dla danego zakresu
+                console.log(a) // runtime: wyszukanie zmiennej - undefined, nie ReferenceError
+                a = 'Chichi Mango' // runtime: operacja przypisania wartości 
+            </code>
+        </pre>
+        <ul style="margin-top: 30px">
+            <li class="next">Deklaracje (i tyle one!) dostępne są dla danego Zakresu ("przesuwają się ku górze")</li>
+            <li class="next">Co jeśli zmienna nie zostaje znaleziona?</li>
+        </ul>
+    </section>
+
+    <section class="slide">
+        <h2>Jak silnik szuka zmiennych?</h2>
+        <ol>
+            <li>Przeszukiwany jest bezpośredni zakres</li>
+            <img class="cover next" style="transform: translate(0,0);" src="images/img/spy.png" width="480" height="360" alt="">
+            <li class="next">Jeśli zmienna jest odnaleziona, lookup się kończy</li>
+            <li class="next">Przeszukiwany jest zakres okalający</li>
+            <img class="cover next" style="transform: translate(30px,0) scale(1.2);" src="images/img/spy.png" width="480" height="360" alt="">
+            <li class="next">...</li>
+            <img class="cover next" style="transform: translate(40px, -10px) scale(1.4);" src="images/img/spy.png" width="480" height="360" alt="">
+            <li class="next">...</li>
+            <img class="cover next" style="transform: translate(60px,-20px) scale(1.6);" src="images/img/spy.png" width="480" height="360" alt="">
+            <li class="next">Przeszukiwany jest zakres globalny</li>
+            <img class="cover next" style="transform: translate(0,0) scale(5);" src="images/img/spy.png" width="480" height="360" alt="">
+        </ol>
+    </section>
+
+    <section class="slide">
+        <img class="cover" src="images/img/fig1.png" alt="">
+    </section>
+
+    <section class="slide compact">
+        <!-- <h2>Ostatnie Sprawdzenie</h2> -->
+        <span>🌍 <em>W jakim celu</em> szukaliśmy zmiennej? 🌏</span>
+        <ol>
+            <li class="next">zależy nam na jej wartości:
+                <ul>
+                    <li><mark>RHS</mark> - <em>right-hand-side lookup</em> ✋</li>
+                    <li class="next"><em style="color: red">ReferenceError</em> ❌</li>
+                </ul>
+            </li>
+
+            <li class="next">zależy nam na "pojemniku", do którego chowamy wartość
+                <ul>
+                    <li><mark>LHS</mark> - <em>left-hand-side lookup</em> 🤚</li>
+                    <li class="next">stworzenie zmiennej globalnej lub <em style="color: red">ReferenceError</em> ❌ jeśli <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode">strict mode</a></li>
+                </ul>
+            </li>
+            <li class="next">
+                Jeżeli zmienna została odnaleziona, ale oczekiwana operacja jest niedozwolona, czeka nas <em style="color: red">TypeError</em> ❌
+            </li>
+        </ol>
+    </section>
+
+    <section class="slide prism">
+        <h2>✋RHS vs LHS🤚</h2>
+        <pre style="font-size: 30px;" class="language-javascript">
+            <code>
+                function foo(a) {
+                    var b = a;
+                    return a + b;
+                }
+                
+                var c = foo( 2 );
+            </code>
+        </pre>
+    </section>
+
+    <!-- TODO uprościć -->
+    <section class="slide prism">
+        <h2>Shadowing 👥</h2>
+        <pre style="font-size: 20px;" class="language-javascript">
+            <code>
+                var something = 0;
+                function doSomething() {
+                    var something = 2; // deklaracja wewnątrz funkcji
+                    console.log(something);
+                  }
+                  doSomething();
+                  console.log(something);
+            </code>
+        </pre>
+    </section>
+
+
+    <section class="slide prism">
+        <h2>Dlaczego zakres jest <em>leksykalny</em>?</h2>
+        <ul>
+            <li class="next">bo ktoś się pomylił</li>
+            <li class="next"><em>lex-time</em></li>
+            <li class="next">dostępność zmiennych określona jest statycznie</li>
+            <img class="next" src="images/img/poet.jpg" width="480" height="360" alt="">
+        </ul>
+    </section>
+
+    <section class="slide compact">
+        <h2>Funkcja</h2>
+        podstawowa jednostka zakresu<br/>
+            <img class="next" src="images/img/fig2.png" width="700" height="400" alt="">
+    </section>
+
+    <section class="slide compact">
+        <h2>Zamykamy zmienne w scopie!</h2>
+        <pre style="font-size: 20px;" class="language-javascript">
+            <code>
+                var a = 2;
+                function foo() { // <-- kiedy dodamy to...
+                    var a = 3;
+                    console.log( a ); // 3
+                } // <-- i to...
+                foo(); // <-- i to...
+                console.log( a ); // 2
+            </code>
+        </pre>
+    </section>
+
+
+    <section class="slide compact">
+        <h2>IIFE</h2>
+        <em>Immediately invoked function expression</em>
+        <pre style="font-size: 20px;" class="language-javascript">
+            <code>
+                var a = 2;
+                (function IIFE() {
+                    var a = 3;
+                    console.log( a ); // 3
+                })();
+                console.log( a ); // 2
+            </code>
+        </pre>
+        <ul>
+            <li class="next">Nie zatruwa globalnego scopu!</li>
+        </ul>
+    </section>
+
+    <section class="slide">
+        <h2>Co jeszcze tworzy zakres?</h2>
+        <ul>
+            <li class="next"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/with">with</a></li>
+            <li class="next"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/eval">eval</a></li>
+        </ul>
+        <img class="cover next" src="images/img/nonono.gif" width="480" height="360" alt="">
+    </section>
+
+    <section class="slide compact">
+        <h2>A bloki?</h2>
+        <em class="next">zmienne z bloków "wyciekają"</em>
+            <pre style="font-size: 20px;" class="language-javascript">
+                <code>
+                    for (var i = 0; i < 3; i++) {
+                        doSomethingWith(i)
+                    }
+                    
+                    console.log(i)
+                </code>
+            </pre>
+        <p class="next"> <b>=> 3</b></p>
+    </section>
+
+
+    <section class="slide compact">
+        <h2>Zakres "blokowy"</h2>
+            <em class="next">niegdyś istniał wyłącznie dla try/catch</em>
+        <pre style="font-size: 20px;" class="language-javascript">
+try {
+    nieIstnieje
+} catch(e){
+    console.log(e)
+}
+console.log(e)
+            </code>
+        </pre>
+    </section>
+
+    <section class="slide">
+        <h2>Bloki same z siebie nie tworzą zakresów</h2>
+            <pre style="font-size: 20px;" class="language-javascript">
+                <code>
+                    if (true) {
+                        var blockVar = 'XYZ'
+                    }
+                    console.log(blockVar)
+                </code>
+            </pre>
+        <p class="next"> <b>=> "XYZ" :'(</b></p>
+    </section>
+    
+    <!-- <section class="slide">
+        <img class="cover" src="images/img/shrug.png" width="480" height="360" alt="">
+    </section> -->
+
+    <section class="slide compact">
+        <h2>Klasyczny przykład</h2>
+            <pre style="font-size: 20px;" class="language-javascript">
+                <code>
+                    for (var i = 1; i < 5; i++) {
+                        setTimeout(function timer() {
+                            console.log(i)
+                        }, 0)
+                    }                
+                </code>
+            </pre>
+        <p class="next"> <b>=> 5, 5, 5...</b></p>
+    </section>
+
+    <section class="slide compact">
+        <h2>Klasyczny przykład</h2>
+            <pre style="font-size: 20px;" class="language-javascript">
+                <code>
+                    var i;
+                    for (i = 1; i < 5; i++) {
+                        setTimeout(function timer() {
+                            console.log(i)
+                        }, 0)
+                    }                
+                </code>
+            </pre>
+        <p class="next"> <b>setTimeout</b> powoduje wykonanie funkcji po dopełnieniu się pętli</p>
+    </section>
+
+    <section class="slide compact">
+        <h2>Klasyczny przykład</h2>
+            <pre style="font-size: 20px;" class="language-javascript">
+                <code>
+                    for (var i = 1; i < 5; i++) {
+                        (function() {
+                          setTimeout(function timer() {
+                              console.log(i)
+                          }, i*1000)
+                        })() // owijamy wszystko w IIFE
+                      }       
+                </code>
+            </pre>
+            <p class="next"> <b>=> 5, 5, 5...</b> <span class="next">Zakres stworzony, ale "i" wspólne</span></p>
+    </section>
+
+    <section class="slide compact">
+        <h2>Klasyczny przykład</h2>
+            <pre style="font-size: 20px;" class="language-javascript">
+                <code>
+                    for (var i = 1; i < 5; i++) {
+                        (function(j) { // "j" to zawsze odpowiednie "i"
+                          setTimeout(function timer() {
+                              console.log(j)
+                          }, i*1000)
+                        })(i) // przesyłamy "i" tej iteracji wgłąb 
+                      }     
+                </code>
+            </pre>
+        <p class="next"> <b>=></b> SUKCES! Przesyłamy odpowiednie "i" do naszego zakresu</p>
+    </section>
+
+    <section class="slide compact">
+        <h2><mark>let</mark> & <mark>const</mark></h2>
+        <pre style="font-size: 20px;" class="language-javascript">
+            <code>
+                for (var i = 1; i < 5; i++) {
+                    let j = i
+                      setTimeout(function timer() {
+                          console.log(j)
+                      }, i*1000)
+                  }     
+            </code>
+        </pre>
+        <ul>
+            <li class="next">ES6, zasymulowanie blokowego zakresu lexowego</li>
+            <li class="next">oznacza to, że zmienna nie "wycieknie", więc i nie da się nadpisać kolejnym iteracjom</li>
+        </ul>
+    </section>
+
+    <section class="slide compact">
+        <h2><mark>let</mark> & <mark>const</mark></h2>
+        <pre style="font-size: 20px;" class="language-javascript">
+            <code>
+                for (let i = 1; i < 5; i++) {
+                      setTimeout(function timer() {
+                          console.log(j)
+                      }, i*1000)
+                  }     
+            </code>
+        </pre>
+    </section>
+
+    <section class="slide compact">
+        <h2><mark>let</mark> & <mark>const</mark></h2>
+        <pre style="font-size: 20px;" class="language-javascript">
+            <code>
+                console.log(zmienna)
+
+                let zmienna =  "hehe"
+            </code>
+        </pre>
+        <p class="next" style="color: red">ReferenceError: can't access lexical declaration `zmienna' before initialization</p>
+        <p class="next">Te deklaracje nie są "hoistowane"!</p>
+    </section>
+
+    <section class="slide">
+        <h2 class="shout">🏆 DOMKNIĘCIE</h2>
+        <span class="next">czyli sławne "closure"</span>
+    </section>
+
+    <section class="slide compact">
+        <h2>🏆 DOMKNIĘCIE</h2>
+        <pre style="font-size: 20px;" class="language-javascript">
+            <code>
+                function myClosure() {
+                    var b = "this is a SECRET"
+                    return function accessB() {
+                        console.log(b)
+                    }					
+                }
+                
+                console.log(myClosure)
+                var consoleLogBFn = myClosure()
+                consoleLogBFn() 
+            </code>
+        </pre>
+    </section>
+
+    <section class="slide">
+        <h2>🏆 DOMKNIĘCIE</h2>
+        <blockquote>
+            <p>Domknięcie następuje, kiedy funkcja ma dostęp do swojego zakresu lexowego, nawet kiedy jest przywołana poza nim, często długo po kompilacji.</p>
+        </blockquote>
+        <ul>
+            <li class="next">Ma miejsce zawsze, kiedy używamy funkcji jako argumentu - timery, callbacki, workery</li>
+        </ul>
+    </section>
+
+    <section class="slide">
+        <em>skoro wiemy...</em>
+        <ul>
+            <li class="next">Co robi ze zmiennymi silnik ECMAScript</li>
+            <li class="next">Jak silnik wyszukuje zmiennych, idąc w górę zakresu</li>
+            <li class="next">Jak cel wyszukania wpływa na jego wynik</li>
+            <li class="next">Co jest główną jednostką zakresu w JS oraz co nam dał ES6</li>
+            <li class="next">Co to jest domknięcie """leksykalne""" (lexowe), czyli <em>closure</em></li>
+        </ul>
+        <h2 class="next">czyli wszystko o tym "jak"...</h2>
+    </section>
+
+    <section class="slide compact">
+        <h2>🤔 PO CO W OGÓLE CHOWAĆ ZMIENNE? </h2>
+            <p class="next"><a href="https://en.wikipedia.org/wiki/Principle_of_least_privilege">Zasada najmniejszego uprzywilejowania</a> charakteryzuje <em>dobry software</em> 😏
+            <p>
+        <blockquote  class="next" style="font-size: 19px">
+            <p>Zasada wymagająca, aby na danym poziomie abstrakcji każdy element systemu informatycznego miał dostęp tylko do tych informacji i zasobów, które są niezbędne do spełnienia wyznaczonego mu celu lub zadania.</p>
+        </blockquote>
+        <ul>
+            <li class="next">utrzymanie prywatnymi szczegółów implementacyjnych. 🔒</li>
+            <li class="next">uniknięcie konfliktów w nazewnictwie ⚔️</li>
+        </ul>
+    </section>
+
+    <!-- reużywalność,
+    composability,
+    izolację -->
+    <section class="slide compact prism">
+        <h2>🧊 Moduł</h2>
+        <ul>
+            <li>Wzór projektowy</li>
+            <li class="next">Wykorzystuje <em>domknięcie</em></li>
+            <li class="next">Jest bardzo popularny niezależnie od języka </li>
+            <li class="next">W JavaScripcie najpopularniejsze implementacje zmieniały się wraz z rozwojem ES</li>
+            <li class="next">⚙️ Definicja
+                <ol>
+                    <li class="next">Jest okalającą funkcją, wywołaną przynajmniej raz ☎️</li>
+                    <li class="next">Zwraca przynajmniej jedną wewnętrzną funkcję, pozwalającą na <em>domknięcie</em> nad prywatnym zakresem i dostęp do zmiennych 🔙</li>
+                </ol>
+            </li>
+        </ul>
+    </section>
+
+    <section class="slide compact">
+        <h2>Funkcja</h2>
+        <pre style="font-size: 20px;" class="language-javascript">
+            <code>
+                function foo() {
+                    var something = 'awesome'
+                    var somethingElse = ['x', 'y', 'z']
+                    function doThisThing () {
+                        console.log(something)
+                    }
+                    function doAnother () {
+                        somethingElse.join(' // ')
+                    }
+                }
+            </code>
+        </pre>
+    </section>
+
+    <!-- mnogie instancje -->
+    <section class="slide compact">
+        <h2>🧊 Moduł</h2>
+            <pre style="font-size: 16px" class="language-javascript">
+                <code style="line-height: 22px">
+                    function MyModule() {
+                        var something = 'super'
+                        var somethingElse = ['x', 'y', 'z']
+                        function doThisThing() {
+                            console.log(something)
+                        }
+                        function doAnother() {
+                            console.log(somethingElse.join(' // '))
+
+                        }
+                        return {
+                            doThisThing: doThisThing,
+                            doAnother: doAnother
+                        }
+                    }
+
+                    var foo = MyModule()
+                    foo.doThisThing()
+                    foo.doAnother()
+                </code>
+            </pre>
+    </section>
+
+    <section class="slide compact">
+        <h2>🧊 Moduł (singleton)</h2>
+            <pre style="font-size: 16px" class="language-javascript">
+                <code style="line-height: 22px">
+                    var foo = (function MyModule() {
+                        var something = 'super'
+                        var somethingElse = ['x', 'y', 'z']
+                        function doThisThing() {
+                            console.log(something)
+                        }
+                        function doAnother() {
+                            console.log(somethingElse.join(' // '))
+
+                        }
+                        return {
+                            doThisThing: doThisThing,
+                            doAnother: doAnother
+                        }
+                    })()
+
+                    foo.doThisThing()
+                    foo.doAnother()
+                </code>
+            </pre>
+    </section>
+    
+    <section class="slide">
+        <h2>this</h2>
+        <ul>
+            <li class="next">wiązanie dynamiczne (runtime)</li>
+            <li class="next">podczas wywołania funkcji, tworzy się tzw. execution context (activation record) zawierający informacje o tym gdzie i jak funkcja została wywołana (<em>call-site</em>).
+                <ol>
+                    <li class="next">To od niego zależy <mark>this</mark>.</li>
+                    <li class="next"><em>call-site</em> funkcji odnajdziemy na call-stacku lub debuggerem (<code>debugger;</code>).</li>
+                </ol>
+                </ol>
+            </li>
+        </ul>
+    </section>
+
+    <section class="slide compact">
+<em>cztery główne zasady wiązania:</em>
+        <ol>
+            <li class="next">defaultowe
+                <ul>
+                    <li class="next">fallback</li>
+                </ul>
+            </li>
+        </ol>
+    </section>
+
+    <section class="slide compact">
+        <pre class="language-javascript">
+            <code>
+                function foo() {
+                    console.log( this.a );
+                }
+            
+                var a = 2;
+            
+                foo();
+            </code>
+        </pre>
+    </section>
+
+    <section class="slide compact">
+        <em>cztery główne zasady wiązania:</em>
+        <ol>
+            <li>defaultowe
+                <ul>
+                    <li>fallback</li>
+                    <li class="next">globalny obiekt - uwaga na <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode">strict mode</a></li>
+                </ul>
+            </li>
+        </ol>
+    </section>
+
+    <section class="slide compact">
+        <pre class="language-javascript">
+            <code>
+                function foo() {
+                    'use strict'
+                    console.log( this.a );
+                }
+            
+                var a = 2;
+            
+                foo();
+            </code>
+        </pre>
+    </section>
+
+    <section class="slide compact">
+        <em>cztery główne zasady wiązania:</em>
+        <ol>
+            <li>defaultowe
+                <ul>
+                    <li>fallback</li>
+                    <li>globalny obiekt - uwaga na <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode">strict mode</a></li>
+                </ul>
+            </li>
+            <li class="next">implikowane</li>
+        </ol>
+    </section>
+
+    
+    <section class="slide compact">
+        <pre class="language-javascript">
+            <code style="line-height: 30px">
+                function foo() {
+                    console.log( this.a );
+                }
+                
+                var obj = {
+                    a: 2,
+                    foo: foo
+                };
+                
+                obj.foo();
+            </code>
+        </pre>
+    </section>
+
+
+    <section class="slide compact">
+        <em>cztery główne zasady wiązania:</em>
+        <ol>
+            <li>defaultowe
+                <ul>
+                    <li>fallback</li>
+                    <li>globalny obiekt - uwaga na <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode">strict mode</a></li>
+                </ul>
+            </li>
+            <li>implikowane - <mark>foo.bar()</mark>
+                <ul>
+                    <li class="next">znaczenie ma tylko najwyższy/statni poziom referencji</li>
+                </ul>
+            </li>
+        </ol>
+    </section>
+
+    <section class="slide compact">
+        <pre class="language-javascript">
+            <code style="line-height: 30px">
+                function foo() {
+                    console.log( this.a );
+                }
+                
+                var obj2 = {
+                    a: 42,
+                    foo: foo
+                };
+                
+                var obj1 = {
+                    a: 2,
+                    obj2: obj2
+                };
+                
+                obj1.obj2.foo(); // 42
+            </code>
+        </pre>
+    </section>
+
+    <section class="slide compact">
+        <em>cztery główne zasady wiązania:</em>
+        <ol>
+            <li>defaultowe
+                <ul>
+                    <li>fallback</li>
+                    <li>globalny obiekt - uwaga na <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode">strict mode</a></li>
+                </ul>
+            </li>
+            <li>implikowane - <mark>foo.bar()</mark>
+                <ul>
+                    <li>znaczenie ma tylko najwyższy/statni poziom referencji</li>
+                    <li class="next">uwaga na aliasy / callbacki!</li>
+                </ul>
+            </li>
+        </ol>
+    </section>
+
+    <section class="slide compact">
+        <pre class="language-javascript">
+            <code style="line-height: 30px">
+                function foo() {
+                    console.log( this.a );
+                }
+                
+                var obj = {
+                    a: 2,
+                    foo: foo
+                };
+                
+                var bar = obj.foo; // referencja / alias!
+                
+                var a = "ojej, jak globalnie"; // globalne 'a'
+                
+                bar();
+            </code>
+        </pre>
+    </section>
+
+    <section class="slide compact">
+        <pre class="language-javascript">
+            <code>
+                function setTimeout(fn, opóźnienie) {
+                    // jakoś wyczekaj to opóźnienie
+                    fn(); // <-- call-site!
+                }
+            </code>
+        </pre>
+    </section>
+
+    <section class="slide compact">
+        <em>cztery główne zasady wiązania:</em>
+        <ol>
+            <li>defaultowe
+                <ul>
+                    <li>fallback</li>
+                    <li>globalny obiekt - uwaga na <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode">strict mode</a></li>
+                </ul>
+            </li>
+            <li>implikowane - <mark>foo.bar()</mark>
+                <ul>
+                    <li>znaczenie ma tylko najwyższy/statni poziom referencji</li>
+                    <li>uwaga na aliasy / callbacki!</li>
+                </ul>
+            </li>
+            <li class="next">deklarowane - <mark>call(..), apply(..)</mark>
+            </li>
+        </ol>
+    </section>
+
+    <section class="slide compact">
+        <pre class="language-javascript">
+            <code>
+                function foo() {
+                    console.log( this.a );
+                }
+                
+                var obj = {
+                    a: 2
+                };
+                
+                foo.call( obj ); // 2
+            </code>
+        </pre>
+    </section>
+
+    <section class="slide compact">
+        <em>cztery główne zasady wiązania:</em>
+        <ol>
+            <li>defaultowe
+                <ul>
+                    <li>fallback</li>
+                    <li>globalny obiekt - uwaga na <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode">strict mode</a></li>
+                </ul>
+            </li>
+            <li>implikowane - <mark>foo.bar()</mark>
+                <ul>
+                    <li>znaczenie ma tylko najwyższy/statni poziom referencji</li>
+                    <li>uwaga na aliasy / callbacki!</li>
+                </ul>
+            </li>
+            <li>deklarowane - <mark>call(..), apply(..)</mark>
+                <ul>
+                    <li class="next">pierwszy argument to <b>this</b></li>
+                </ul>
+            </li>
+        </ol>
+    </section>
+
+    <section class="slide compact">
+        <pre style="font-size: 16px;" class="language-javascript">
+            <code style="line-height: 20px">
+                function foo() {
+                    console.log( this.a );
+                }
+                
+                var obj = {
+                    a: 2
+                };
+                
+                var bar = function() {
+                    foo.call( obj );
+                };
+                
+                bar(); // 2
+                setTimeout( bar, 100 ); // 2
+                
+                // `bar` ma `this` 'zhard-bindowane' do `obj`
+                // nie może być już nadpisane
+                bar.call( window ); // 2
+            </code>
+        </pre>
+    </section>
+
+    <section class="slide compact">
+        <pre style="font-size: 16px;" class="language-javascript">
+            <code style="line-height: 24px">
+                function foo(something) {
+                    console.log( this.a, something );
+                    return this.a + something;
+                }
+                
+                var obj = {
+                    a: 2
+                };
+                
+                var bar = function() {
+                    return foo.apply( obj, arguments );
+                };
+                
+                var b = bar( 3 ); // 2 3
+                console.log( b ); // 5
+            </code>
+        </pre>
+    </section>
+
+    <section class="slide compact">
+        <pre style="font-size: 16px;" class="language-javascript">
+            <code style="line-height: 24px">
+                function foo(something) {
+                    console.log( this.a, something );
+                    return this.a + something;
+                }
+                
+                // prosty, 'bindujący' helper
+                function bind(fn, obj) {
+                    return function() {
+                        return fn.apply( obj, arguments );
+                    };
+                }
+                
+                var obj = {
+                    a: 2
+                };
+                
+                var bar = bind( foo, obj );
+                
+                var b = bar( 3 ); // 2 3
+                console.log( b ); // 5
+            </code>
+        </pre>
+    </section>
+
+    <section class="slide compact">
+        <em>cztery główne zasady wiązania:</em>
+        <ol>
+            <li>defaultowe
+                <ul>
+                    <li>fallback</li>
+                    <li>globalny obiekt - uwaga na <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode">strict mode</a></li>
+                </ul>
+            </li>
+            <li>implikowane</mark>
+                <ul>
+                    <li>znaczenie ma tylko najwyższy/statni poziom referencji</li>
+                    <li>uwaga na aliasy / callbacki!</li>
+                </ul>
+            </li>
+            <li>deklarowane - <mark>call(..), apply(..)</mark>
+                <ul>
+                    <li>pierwszy argument to <b>this</b></li>
+                    <li class="next">ES5 <b>.bind()</b></li>
+                </ul>
+            </li>
+        </ol>
+    </section>
+
+    <section class="slide compact">
+        <pre style="font-size: 16px;" class="language-javascript">
+            <code style="line-height: 24px">
+                function foo(something) {
+                    console.log( this.a, something );
+                    return this.a + something;
+                }
+                
+                var obj = {
+                    a: 2
+                };
+                
+                var bar = foo.bind( obj );
+                
+                var b = bar( 3 ); // 2 3
+                console.log( b ); // 5
+            </code>
+        </pre>
+    </section>
+
+    <section class="slide compact">
+        <ol>
+            <li>defaultowe
+                <ul>
+                    <li>fallback</li>
+                    <li>globalny obiekt - uwaga na <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode">strict mode</a></li>
+                </ul>
+            </li>
+            <li>implikowane</mark>
+                <ul>
+                    <li>znaczenie ma tylko najwyższy/statni poziom referencji</li>
+                    <li>uwaga na aliasy / callbacki!</li>
+                </ul>
+            </li>
+            <li>deklarowane - <mark>call(..), apply(..)</mark>
+                <ul>
+                    <li>pierwszy argument to <b>this</b></li>
+                    <li>ES5 <b>.bind()</b></li>
+                    <li class="next"><b>context</b> w API >= ES6</li>
+                </ul>
+            </li>
+        </ol>
+    </section>
+
+    <section class="slide compact">
+        <pre class="language-javascript">
+            <code style="line-height: 35px">
+                function foo(el) {
+                    console.log( el, this.id );
+                }
+                
+                var obj = {
+                    id: "fajno"
+                };
+                
+                // użyj `obj` jako `this` dla wywołań `foo(..)`
+                [1, 2, 3].forEach( foo, obj );
+            </code>
+        </pre>
+    </section>
+
+    <section class="slide compact">
+        <ol>
+            <li>defaultowe</li>
+            <li>implikowane - <mark>foo.bar()</mark></mark>
+                <ul>
+                    <li>znaczenie ma tylko najwyższy/statni poziom referencji</li>
+                    <li>uwaga na aliasy / callbacki!</li>
+                </ul>
+            </li>
+            <li>deklarowane - <mark>call(..), apply(..)</mark>
+                <ul>
+                    <li>pierwszy argument to <b>this</b></li>
+                    <li>ES5 <b>.bind()</b></li>
+                    <li><b>context</b> w nowych API</li>
+                </ul>
+            </li>
+            <li class="next"><mark>new</mark></li>
+        </ol>
+    </section>
+
+    <section class="slide">
+        <h2>new</h2>
+        <em class="next"><b>constructor call</b> - specjalny sposób wywołania zwykłej funkcji</em>
+        <ol>
+            <li class="next">Zwracany jest obiekt, nawet jeśli sama funkcja go nie zwraca</li>
+            <ul>
+                <li class="next">nawet jeżeli bez nawijasów!</li>
+            </ul>
+            <li class="next"><b>this</b> w tej funkcji skierowane jest na zwracany obiekt</li>
+        </ol>
+    </section>
+
+    <section class="slide compact">
+        <pre class="language-javascript">
+            <code>
+                function justAConsoleLog(string) {
+                    console.log(string)
+                    this.name=string;
+                  }
+                  var bar = new justAConsoleLog('hehe')
+                  console.log(bar.name)
+            </code>
+        </pre>
+    </section>
+
+    <section class="slide compact">
+        <h2><code>this</code> to...</h2>
+        <ol>
+            <li class="next"><code>var bar = new foo()</code>
+                <span class="next"> => nowo stworzony obiekt</span>
+            </li>
+            <li class="next"><code>var bar = foo.call( obj )</code>
+                <span class="next"> => określony obiekt</span>
+            </li>
+            <li class="next"><code>var bar = obj.foo()</code>
+                <span class="next"> => obiekt, "na którym" referencja do funkcji</span>
+            </li>
+            <li class="next"><code>var bar = foo()</code>
+                <span class="next"> => <code>global</code> lub <code>undefined</code></span>
+            </li>
+        </ol>
+    </section>
+
+    <section class="slide compact">
+        <h2><code>foo.bar()</code></h2>
+        <ul>
+            <li class="next">do właściwości obiektów dostajemy się dwojako: <code>.nazwa</code> lub <code>["nazwa"]</code></li>
+            <li class="next">jeżeli określona właściwość nie istnieje bezpośrednio na obiekcie, konsultowany jest jej prototyp...</li>
+            <li class="next">mechanizm ten, nazywany czasem "delegacją", stoi za określaniem dostępności właściwości obiektów, podobnie jak zakres tłumaczy dostępność zmiennych</li>
+        </ul>
+    </section>
+
+    <section class="slide compact">
+        <pre class="language-javascript">
+            <code>
+                var anotherObject = {
+                    a: 2
+                };
+                
+                // tworzymy obiekt "delegujący do" anotherObject 
+                var myObject = Object.create( anotherObject );
+                
+                myObject.a; // 2
+            </code>
+        </pre>
+    </section>
+
+    <section class="slide compact">
+        <h2>🔗 Łańcuch Prototypów</h2>
+        <ul>
+            <li><code>.prototype</code>
+                <ul>
+                    <li class="next">właściwość wszystkich obiektów</li>
+                    <li class="next">jest po prostu referencją do innego obiektu</li>
+                    <li class="next">w większości przypadków nie jest pusta w momencie stworzenia 🙏🏻</li>
+                </ul>
+            </li>
+            <li class="next">na końcu, przeważnie - <code>Object.prototype</code></li>
+            <ul>
+                <li class="next"><code>.hasOwnProperty()</code>, <code>.toString()</code>, <code>.valueOf()</code>...</li>
+            </ul>
+        </ul>
+    </section>
+
+    <section class="slide compact">
+        <h2 class="shout">jeśli nie ma, zwrócone <code>undefined</code></h2>
+    </section>
+
+    <section class="slide compact">
+        <h2>👥 Shadowing właściwości obiektów</h2>
+        <code>myObj.foo = "bar"</code>
+        <ul>
+            <li class="next">Jeżeli <code>foo</code> nie istnieje na łańcuchu prototypów, zostaje przypisany</li>
+            <li class="next">Jeżeli <b>istnieje</b>, mogą zdarzyć się trzy rzeczy:</code>
+            <ol>
+                <li class="next">właściwość <code>foo</code> jest w opisana jako zapisywalna (<code>Object.getOwnPropertyDescriptor</code>) - następuje shadowing</li>
+                <li class="next">właściwość ma <code>writable: false</code> - cicho failuje, error przy strict mode.</li>
+                <li class="next">właściwość ma setter'a - zostanie on wykonany, a właściwość nie doda się niżej</li>
+            </ol></li>
+            <li class="next"><b>unikać</b> umyślnego shadow'owania, jeśli możliwe!</li>
+        </ul>
+    </section>
+
+    <section class="slide">
+        <h2>Jak uczynić dwa obiekty połączonymi?</h2>
+        <ol>
+            <li class="next"><code>new</code>: 
+            <ul>
+                <li class="next"><code>this</code> zbindowane jest z instancją obiektu</li>
+            </ul></li>
+            <li class="next">przez <code>Object.create(oryginalnyObiekt)</code>
+        </ol>
+        <em class="next">Object.create(null)</em>
+    </section>
+
+    <section class="slide compact">
+        <pre style="font-size: 16px;" class="language-javascript">
+            <code style="line-height: 24px">
+                var anotherObject = {
+                    cool: function() {
+                        console.log( "ale cool!" );
+                    }
+                };
+                
+                var myObject = Object.create( anotherObject );
+                
+                myObject.doCool = function() {
+                    this.cool(); // wewnętrzna delegacja!
+                };
+                
+                myObject.doCool(); // "ale cool!"
+            </code>
+        </pre>
+    </section>
+
+    <section class="slide">
+        <h2>Inne sposoby na uzyskiwanie obiektu</h2>
+        <ul>
+            <li class="next">🛠️ Constructor Function</li>
+            <li class="next">🏫 Klasa</li>
+            <li class="next">🧊 Factory Fuction</li>
+        </ul>
+    </section>
+
+    <section class="slide">
+        <h2>🛠️ Constructor Function</h2>
+        <pre class="language-javascript">
+            <code>
+                const Powitanie = function(pozdro) {
+                    this.powitanie = pozdro;
+                    this.powitaj = () => console.log(this.powitanie)
+                }
+            </code>
+        </pre>
+    </section>
+
+    <section class="slide">
+        <h2>🏫 Klasa</h2>
+        <pre style="font-size: 16px;" class="language-javascript">
+            <code style="line-height: 24px">
+                class Powitanie {
+                    constructor(pozdro) {
+                        this.powitanie = pozdro;   
+                    }
+                    powitaj() {
+                       console.log(this.powitanie)
+                    }
+                }
+            </code>
+        </pre>
+    </section>
+
+    <section class="slide">
+        <h2>🧊 Factory Fuction</h2>
+        <pre style="font-size: 16px;" class="language-javascript">
+            <code style="line-height: 24px">
+                const Powitanie = function(pozdro) {
+                    return {
+                        powitanie: pozdro,
+                        powitaj() {
+                            console.log(pozdro)
+                        }
+                    }
+                }
+            </code>
+        </pre>
+    </section>
+
+    <section class="slide">
+        <h2 class="shout">async</h2>
+    </section>
+
+    <section class="slide compact">
+        <h2>callback</h2>
+        <ul>
+            <li class="next">możliwość funkcji by <b>call back in</b></li>
+            <li class="next">najpopularniejszy wzrór na asynchroniczność w języku</li>
+            <li class="next">funkcja "owija" kod do wykonania w przyszłości</li>
+            <li class="next">problemy:<ul>
+                <li class="next">kod jest nieczytelny, trudny w utrzymaniu</li>
+                <li class="next">wymaga dokładnej znajomości mechaniki</li>
+                <li class="next"><em>inversion of control</em></li>
+            </ul></li>
+        </ul>
+    </section>
+
+    <section class="slide compact">
+        <h2>Pyramid of Doom</h2>
+        <img class="cover" src="images/img/pyramid.jpg" width="480" height="360" alt="">
+    </section>
+
+    <section class="slide compact">
+        <h2>Promise API</h2>
+        <ul>
+            <li class="next">obietnica zwrócenia wartości</li>
+            <li class="next">constructor z <mark>new</mark></li>
+            <li class="next">jako argument - callback, za argumenty przyjmujący dwa inne - <mark>resolve</mark> i <mark>reject</mark></li>
+            <li class="next"><mark>.then()</mark> pozwala wchodzić w interakcje z wartością zwrotną, również z callbackami</li>
+            <li class="next"><mark>.catch()</mark> łapie błędy, tożsame z <mark>.then(null, reject)</mark></li>
+            <li class="next">
+                <mark>.race()</mark>, 
+                <mark>.all()</mark>
+            </li>
+        </ul>
+    </section>
+
+    <section class="slide compact">
+        <pre style="font-size: 16px;" class="language-javascript">
+            <code style="line-height: 24px">
+                var p1 = Promise.resolve( 42 );
+                var p2 = Promise.resolve( "Hello World" );
+                var p3 = Promise.reject( "Oops" );
+                
+                Promise.race( [p1,p2,p3] )
+                .then( function(msg){
+                    console.log( msg );		// 42
+                } );
+                
+                Promise.all( [p1,p2,p3] )
+                .catch( function(err){
+                    console.error( err );	// "Oops"
+                } );
+                
+                Promise.all( [p1,p2] )
+                .then( function(msgs){
+                    console.log( msgs );	// [42,"Hello World"]
+                } );
+            </code>
+        </pre>
+    </section>
+
+    <section class="slide">
+        <h2>Fetch API</h2>
+        <ul>
+            <li class="next">posiada ogólną definicje obiektu <b>Request</b> i <b>Response</b> (uniwersalność)</li>
+            <li class="next">zwraca <mark>Promise</mark>, "resolwujący" w określony response</li>
+            <li class="next">drugi argument, init, pozwala m.in. ustwiać Headery</li>
+            <li class="next">błędy serwera (np 404, 500) nie spowoduje aktywowania promisowego mechanizmu rejectującego, dlatego należy sprawdzać flagę <b>Response.ok</b></li>
+        </ul>
+    </section>
+
+    <section class="slide compact">
+        <h2>Przykład</h2>
+        <pre style="font-size: 16px;" class="language-javascript">
+            <code style="line-height: 24px">
+                fetch('http://example.com/movies.json')
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                      }
+                    return response.json();
+                })
+                .then((data) => {
+                    console.log(data);
+                });
+            </code>
+        </pre>
+        <a href="https://caniuse.com/#feat=fetch">Can I Use Fetch</a>
+    </section>
+
+    https://caniuse.com/#search=async
+
+    <section class="slide">
+        <h2 class="shout">modularny refactoring</h2>
+    </section>
+
+
+    <!-- <section class="slide compact">
         <h2>Slide Header</h2>
 
         <p>Echo Park 8-bit sustainable umami deep v Kickstarter. DIY cliche typewriter brunch, Odd Future sriracha pickled aesthetic. Farm-to-table bespoke fingerstache, kale chips umami brunch letterpress.</p>
         <p>Whatever authentic disrupt, you probably haven't heard of them direct trade mlkshk Etsy. Gluten-free roof party plaid four loko quinoa.</p>
         <p class="note">Echo Park 8-bit sustainable umami deep v Kickstarter.</p>
-    </section>
+    </section> -->
 
-    <section class="slide compact">
-        <h2>Inline Elements</h2>
+        <!-- <section class="slide compact">
+            <h2>Inline Elements</h2>
 
-        <p>Retro meh brunch <a href="">aesthetic</a> Cosby sweater Shoreditch. Banksy Tumblr
-            <strong>sriracha</strong>, flexitarian pug chia master cleanse vinyl
-            <em>wayfarers</em> fanny pack bespoke Helvetica <b>roof</b> party. Messenger bag retro cred
-            <i>Portland</i> next level. Yr stumptown Schlitz Carles deep v small batch. Hella sustainable messenger bag,
-            <mark>leggings</mark>
-            skateboard literally<sup>1</sup> bicycle rights H<sub>2</sub>0 mumblecore banh mi DIY VHS. Semiotics four loko street art asymmetrical. Asymmetrical
-            <code>&lt;paleo&gt;</code> you probably haven’t heard of.
-        </p>
-
-        <footer class="footer">
             <p>Retro meh brunch <a href="">aesthetic</a> Cosby sweater Shoreditch. Banksy Tumblr
                 <strong>sriracha</strong>, flexitarian pug chia master cleanse vinyl
                 <em>wayfarers</em> fanny pack bespoke Helvetica <b>roof</b> party. Messenger bag retro cred
@@ -80,204 +1434,214 @@
                 skateboard literally<sup>1</sup> bicycle rights H<sub>2</sub>0 mumblecore banh mi DIY VHS. Semiotics four loko street art asymmetrical. Asymmetrical
                 <code>&lt;paleo&gt;</code> you probably haven’t heard of.
             </p>
-        </footer>
-    </section>
 
-    <section class="slide compact">
-        <h2>Columns</h2>
-        <p class="double">Echo Park 8-bit sustainable umami deep v Kickstarter. DIY cliche typewriter brunch, Odd Future sriracha pickled aesthetic. Farm-to-table bespoke fingerstache, kale chips umami brunch American Apparel letterpress. Whatever authentic disrupt, you probably haven't heard of them direct trade mlkshk Etsy. Gluten-free roof party plaid American Apparel four loko quinoa. Echo Park 8-bit sustainable.</p>
-    </section>
+            <footer class="footer">
+                <p>Retro meh brunch <a href="">aesthetic</a> Cosby sweater Shoreditch. Banksy Tumblr
+                    <strong>sriracha</strong>, flexitarian pug chia master cleanse vinyl
+                    <em>wayfarers</em> fanny pack bespoke Helvetica <b>roof</b> party. Messenger bag retro cred
+                    <i>Portland</i> next level. Yr stumptown Schlitz Carles deep v small batch. Hella sustainable messenger bag,
+                    <mark>leggings</mark>
+                    skateboard literally<sup>1</sup> bicycle rights H<sub>2</sub>0 mumblecore banh mi DIY VHS. Semiotics four loko street art asymmetrical. Asymmetrical
+                    <code>&lt;paleo&gt;</code> you probably haven’t heard of.
+                </p>
+            </footer>
+        </section>
 
-    <section class="slide">
-        <h2>Quotes</h2>
-        <blockquote>
-            <p>Flannel bicycle rights locavore selfies skateboard. Authentic fanny pack paleo four loko bespoke. Artisan tattooed chia XOXO ennui, lomo disrupt 8-bit art party Tumblr scenester.</p>
-        </blockquote>
-        <figure>
+        <section class="slide compact">
+            <h2>Columns</h2>
+            <p class="double">Echo Park 8-bit sustainable umami deep v Kickstarter. DIY cliche typewriter brunch, Odd Future sriracha pickled aesthetic. Farm-to-table bespoke fingerstache, kale chips umami brunch American Apparel letterpress. Whatever authentic disrupt, you probably haven't heard of them direct trade mlkshk Etsy. Gluten-free roof party plaid American Apparel four loko quinoa. Echo Park 8-bit sustainable.</p>
+        </section>
+
+        <section class="slide">
+            <h2>Quotes</h2>
             <blockquote>
-                <p>Post-ironic fashion axe flexitarian, Tonx narwhal messenger bag Tumblr. Portland gentrify deep v kale chips literally.</p>
+                <p>Flannel bicycle rights locavore selfies skateboard. Authentic fanny pack paleo four loko bespoke. Artisan tattooed chia XOXO ennui, lomo disrupt 8-bit art party Tumblr scenester.</p>
             </blockquote>
-            <figcaption>Yours Truly</figcaption>
-        </figure>
-    </section>
+            <figure>
+                <blockquote>
+                    <p>Post-ironic fashion axe flexitarian, Tonx narwhal messenger bag Tumblr. Portland gentrify deep v kale chips literally.</p>
+                </blockquote>
+                <figcaption>Yours Truly</figcaption>
+            </figure>
+        </section>
 
-    <section class="slide compact">
-        <h2>Nested Lists</h2>
-        <ol>
-            <li>Literally viral vegan, ugh drinking vinegar photo booth</li>
-            <li>Wes Anderson chillwave Marfa pour-over Etsy banh mi</li>
-            <li>Ethnic polaroid lo-fi iPhone ennui
-                <ul>
-                    <li>Yr wayfarers before they sold out Kickstarter asymmetrical</li>
-                    <li>Irony flexitarian readymade quinoa, kogi bespoke meggings narwhal</li>
-                    <li>Skateboard Etsy twee artisan Echo Park</li>
-                </ul>
-            </li>
-            <li>Tonx kitsch fingerstache readymade, retro single-origin coffee</li>
-        </ol>
-    </section>
+        <section class="slide compact">
+            <h2>Nested Lists</h2>
+            <ol>
+                <li>Literally viral vegan, ugh drinking vinegar photo booth</li>
+                <li>Wes Anderson chillwave Marfa pour-over Etsy banh mi</li>
+                <li>Ethnic polaroid lo-fi iPhone ennui
+                    <ul>
+                        <li>Yr wayfarers before they sold out Kickstarter asymmetrical</li>
+                        <li>Irony flexitarian readymade quinoa, kogi bespoke meggings narwhal</li>
+                        <li>Skateboard Etsy twee artisan Echo Park</li>
+                    </ul>
+                </li>
+                <li>Tonx kitsch fingerstache readymade, retro single-origin coffee</li>
+            </ol>
+        </section>
 
-    <section class="slide compact">
-        <h2>Simple Table</h2>
-        <table>
-            <tr>
-                <th scope="col">Gentrify</th>
-                <th>Twee</th>
-                <th>Artisan</th>
-                <th>Banksy</th>
-            </tr>
-            <tr>
-                <th scope="row">Messenger</th>
-                <td>Mixtape</td>
-                <td>Small batch</td>
-                <td>Bicycle rights</td>
-            </tr>
-            <tr>
-                <th scope="row">Meggings</th>
-                <td>Freegan</td>
-                <td>Retro biodiesel</td>
-                <td>Slow-carb</td>
-            </tr>
-            <tr>
-                <th scope="row">Vegan</th>
-                <td>Occupy</td>
-                <td>Normcore</td>
-                <td>Put a bird on it</td>
-            </tr>
-            <tr>
-                <th scope="row">Next level</th>
-                <td>Selfies</td>
-                <td>Sustainable</td>
-                <td>Organic</td>
-            </tr>
-            <tr>
-                <th scope="row">Umami</th>
-                <td>Asymmetrical</td>
-                <td>Keytar</td>
-                <td>Craft beer</td>
-            </tr>
-            <tr>
-                <th scope="row">Biodiesel</th>
-                <td>Haven’t heard</td>
-                <td>Skateboard</td>
-                <td>Farm-to-table</td>
-            </tr>
-        </table>
-    </section>
+        <section class="slide compact">
+            <h2>Simple Table</h2>
+            <table>
+                <tr>
+                    <th scope="col">Gentrify</th>
+                    <th>Twee</th>
+                    <th>Artisan</th>
+                    <th>Banksy</th>
+                </tr>
+                <tr>
+                    <th scope="row">Messenger</th>
+                    <td>Mixtape</td>
+                    <td>Small batch</td>
+                    <td>Bicycle rights</td>
+                </tr>
+                <tr>
+                    <th scope="row">Meggings</th>
+                    <td>Freegan</td>
+                    <td>Retro biodiesel</td>
+                    <td>Slow-carb</td>
+                </tr>
+                <tr>
+                    <th scope="row">Vegan</th>
+                    <td>Occupy</td>
+                    <td>Normcore</td>
+                    <td>Put a bird on it</td>
+                </tr>
+                <tr>
+                    <th scope="row">Next level</th>
+                    <td>Selfies</td>
+                    <td>Sustainable</td>
+                    <td>Organic</td>
+                </tr>
+                <tr>
+                    <th scope="row">Umami</th>
+                    <td>Asymmetrical</td>
+                    <td>Keytar</td>
+                    <td>Craft beer</td>
+                </tr>
+                <tr>
+                    <th scope="row">Biodiesel</th>
+                    <td>Haven’t heard</td>
+                    <td>Skateboard</td>
+                    <td>Farm-to-table</td>
+                </tr>
+            </table>
+        </section>
 
-    <section class="slide compact">
-        <h2>Striped Table</h2>
-        <table class="striped">
-            <tr>
-                <th scope="col">Gentrify</th>
-                <th>Twee</th>
-                <th>Artisan</th>
-                <th>Banksy</th>
-            </tr>
-            <tr>
-                <th scope="row">Messenger</th>
-                <td>Mixtape</td>
-                <td>Small batch</td>
-                <td>Bicycle rights</td>
-            </tr>
-            <tr>
-                <th scope="row">Meggings</th>
-                <td>Freegan</td>
-                <td>Retro biodiesel</td>
-                <td>Slow-carb</td>
-            </tr>
-            <tr>
-                <th scope="row">Vegan</th>
-                <td>Occupy</td>
-                <td>Normcore</td>
-                <td>Put a bird on it</td>
-            </tr>
-            <tr>
-                <th scope="row">Next level</th>
-                <td>Selfies</td>
-                <td>Sustainable</td>
-                <td>Organic</td>
-            </tr>
-            <tr>
-                <th scope="row">Umami</th>
-                <td>Asymmetrical</td>
-                <td>Keytar</td>
-                <td>Craft beer</td>
-            </tr>
-            <tr>
-                <th scope="row">Biodiesel</th>
-                <td>Haven’t heard</td>
-                <td>Skateboard</td>
-                <td>Farm-to-table</td>
-            </tr>
-        </table>
-    </section>
+        <section class="slide compact">
+            <h2>Striped Table</h2>
+            <table class="striped">
+                <tr>
+                    <th scope="col">Gentrify</th>
+                    <th>Twee</th>
+                    <th>Artisan</th>
+                    <th>Banksy</th>
+                </tr>
+                <tr>
+                    <th scope="row">Messenger</th>
+                    <td>Mixtape</td>
+                    <td>Small batch</td>
+                    <td>Bicycle rights</td>
+                </tr>
+                <tr>
+                    <th scope="row">Meggings</th>
+                    <td>Freegan</td>
+                    <td>Retro biodiesel</td>
+                    <td>Slow-carb</td>
+                </tr>
+                <tr>
+                    <th scope="row">Vegan</th>
+                    <td>Occupy</td>
+                    <td>Normcore</td>
+                    <td>Put a bird on it</td>
+                </tr>
+                <tr>
+                    <th scope="row">Next level</th>
+                    <td>Selfies</td>
+                    <td>Sustainable</td>
+                    <td>Organic</td>
+                </tr>
+                <tr>
+                    <th scope="row">Umami</th>
+                    <td>Asymmetrical</td>
+                    <td>Keytar</td>
+                    <td>Craft beer</td>
+                </tr>
+                <tr>
+                    <th scope="row">Biodiesel</th>
+                    <td>Haven’t heard</td>
+                    <td>Skateboard</td>
+                    <td>Farm-to-table</td>
+                </tr>
+            </table>
+        </section>
 
-    <section class="slide prism">
-        <h2>Listing Slide</h2>
+        <section class="slide prism">
+            <h2>Listing Slide</h2>
 
-        <pre style="font-size: 40px;" class="language-javascript line-numbers">
-            <code>
-                function wrap(value) {
-                    return function () {
-                        return value;
+            <pre style="font-size: 40px;" class="language-javascript line-numbers">
+                <code>
+                    function wrap(value) {
+                        return function () {
+                            return value;
+                        }
                     }
-                }
 
-                function bind(monad, f) {
-                    return f(monad());
-                }
-            </code>
-        </pre>
-    </section>
+                    function bind(monad, f) {
+                        return f(monad());
+                    }
+                </code>
+            </pre>
+        </section>
 
-    <section class="slide prism">
-        <pre style="font-size: 30px;" class="language-javascript line-numbers">
-            <code>
-                var monad = wrap('cookie');
-                bind(monad, (value) => {
-                    console.info(value);
-                    return wrap(value);
-                });
-                monad = bind(monad, (value) => {
-                    return wrap({ type: value });
-                });
-                bind(monad, (value) => {
-                    console.log(value);
-                    return wrap(value);
-                });
-            </code>
-        </pre>
-    </section>
+        <section class="slide prism">
+            <pre style="font-size: 30px;" class="language-javascript line-numbers">
+                <code>
+                    var monad = wrap('cookie');
+                    bind(monad, (value) => {
+                        console.info(value);
+                        return wrap(value);
+                    });
+                    monad = bind(monad, (value) => {
+                        return wrap({ type: value });
+                    });
+                    bind(monad, (value) => {
+                        console.log(value);
+                        return wrap(value);
+                    });
+                </code>
+            </pre>
+        </section>
 
-    <section class="slide">
-        <h2 class="shout"><a href="">Linked</a> Shout</h2>
-    </section>
+        <section class="slide">
+            <h2 class="shout"><a href="">Linked</a> Shout</h2>
+        </section>
 
-    <section class="slide">
-        <h2 class="shout grow">Effect: Growing Shout</h2>
-    </section>
+        <section class="slide">
+            <h2 class="shout grow">Effect: Growing Shout</h2>
+        </section>
 
-    <section class="slide">
-        <h2 class="shout shrink">Effect: Shrinking Shout</h2>
-    </section>
+        <section class="slide">
+            <h2 class="shout shrink">Effect: Shrinking Shout</h2>
+        </section>
 
-    <section class="slide">
-        <figure>
-            <img class="cover" src="vendors/shower-ribbon/pictures/exact.png" alt="">
-            <figcaption class="white">Copyright © 2016 <a href="">Yours Truly</a>, Famous Inc.</figcaption>
-        </figure>
-    </section>
+        <section class="slide">
+            <figure>
+                <img class="cover" src="vendors/shower-ribbon/pictures/exact.png" alt="">
+                <figcaption class="white">Copyright © 2016 <a href="">Yours Truly</a>, Famous Inc.</figcaption>
+            </figure>
+        </section>
 
-    <section class="slide">
-        <img class="cover" src="vendors/shower-ribbon/pictures/tall.png" alt="">
-    </section>
+        <section class="slide">
+            <img class="cover" src="vendors/shower-ribbon/pictures/tall.png" alt="">
+        </section>
 
-    <section class="slide">
-        <img class="cover" src="vendors/shower-ribbon/pictures/wide.png" alt="">
-    </section>
+        <section class="slide">
+            <img class="cover" src="vendors/shower-ribbon/pictures/wide.png" alt="">
+        </section> -->
 
-    <section class="slide white">
+    <!-- <section class="slide white">
         <img class="place top left" src="vendors/shower-ribbon/pictures/square.png" alt="">
         <img class="place top" src="vendors/shower-ribbon/pictures/square.png" alt="">
         <img class="place top right" src="vendors/shower-ribbon/pictures/square.png" alt="">
@@ -297,7 +1661,7 @@
 
     <section class="slide">
         <img class="cover" src="images/gifs/example-gif.gif" width="480" height="360" alt="">
-    </section>
+    </section> -->
 
     <section class="slide">
         <h3 class="shout">See you next month at WarsawJS</h3>
@@ -321,5 +1685,10 @@
     <!-- Prism.js -->
     <script src="vendors/prism/prism.js"></script>
     <script src="vendors/prism/custom-prism.js"></script>
+    <script>
+        // console.log(a)
+        // var a = 4
+    </script>
+
 </body>
 </html>
