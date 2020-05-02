@@ -263,7 +263,7 @@
             </code>
         </pre>
         <ul style="margin-top: 30px">
-            <li class="next">Deklaracje (i tyle one!) dostępne są dla danego Zakresu ("przesuwają się ku górze")</li>
+            <li class="next">Deklaracje (i tylko one!) dostępne są dla danego Zakresu ("przesuwają się ku górze")</li>
             <li class="next">Co jeśli zmienna nie zostaje znaleziona?</li>
         </ul>
     </section>
@@ -422,12 +422,13 @@
         <h2>Zakres "blokowy"</h2>
             <em class="next">niegdyś istniał wyłącznie dla try/catch</em>
         <pre style="font-size: 20px;" class="language-javascript">
-try {
-    nieIstnieje
-} catch(e){
-    console.log(e)
-}
-console.log(e)
+            <code>
+                try {
+                    nieIstnieje
+                } catch(e){
+                    console.log(e)
+                }
+                console.log(e)
             </code>
         </pre>
     </section>
@@ -516,9 +517,9 @@ console.log(e)
             <code>
                 for (var i = 1; i < 5; i++) {
                     let j = i
-                      setTimeout(function timer() {
-                          console.log(j)
-                      }, i*1000)
+                    setTimeout(function timer() {
+                        console.log(j)
+                    }, i*1000)
                   }     
             </code>
         </pre>
@@ -607,7 +608,7 @@ console.log(e)
             <p>Zasada wymagająca, aby na danym poziomie abstrakcji każdy element systemu informatycznego miał dostęp tylko do tych informacji i zasobów, które są niezbędne do spełnienia wyznaczonego mu celu lub zadania.</p>
         </blockquote>
         <ul>
-            <li class="next">utrzymanie prywatnymi szczegółów implementacyjnych. 🔒</li>
+            <li class="next">utrzymanie prywatnymi szczegółów implementacyjnych 🔒</li>
             <li class="next">uniknięcie konfliktów w nazewnictwie ⚔️</li>
         </ul>
     </section>
